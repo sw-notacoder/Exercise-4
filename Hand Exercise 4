@@ -1,0 +1,87 @@
+setwd("/Users/swastik/Desktop/AMMA 2017/Data/data_2017")
+data_csv.df <- read.csv(file="/Users/swastik/Desktop/AMMA 2017/Data/data_2017/student/student-mat.csv")
+
+table1=read.table("student-mat.csv",sep=";",header=TRUE)
+table2=read.table("student-por.csv",sep=";",header=TRUE)
+View(table1)
+View(table2)
+final_table<- merge(table1,table2,by=c("school","sex","age","address","famsize","Pstatus","Medu","Fedu","Mjob","Fjob","reason","nursery","internet"))
+View(final_table)
+female_grade1=0
+female_grade2=0
+female_grade3=0
+male_grade1=0
+male_grade2=0
+male_grade3=0
+female_count=0
+male_count=0
+# reset directory and read file
+View(final_table)
+for(i in 1:nrow(final_table))
+  {
+      final_table$combined_absences[i]= final_table$absences.x[i] + final_table$absences.y[i]
+      if(final_table$sex[i]=="F")
+      {
+           female_count=female_count+1
+            female_grade1=female_grade1 + final_table$G1.x[i] + final_table$G1.y[i]
+            female_grade2=female_grade2 + final_table$G2.x[i] + final_table$G2.y[i]
+           female_grade2=female_grade3 + final_table$G3.x[i] + final_table$G3.y[i]
+         }
+      else
+       {
+            male_count=male_count+1
+           male_grade1=male_grade1 + final_table$G1.x[i] + final_table$G1.y[i]
+            male_grade2=male_grade2 + final_table$G2.x[i] + final_table$G2.y[i]
+            male_grade2=male_grade3 + final_table$G3.x[i] + final_table$G3.y[i]  
+          }
+   }
+ avrg_female_grd=  (female_grade1+female_grade2+female_grade3)/3
+ avrg_male_grd=  (male_grade1+male_grade2+male_grade3)/3
+ final_avrg_fml=avrg_female_grd/female_count
+ final_avrg_ml=avrg_male_grd/male_count
+ View(final_table)
+ max_G1 = max(final_table$G1.x + final_table$G1.y)
+ max_G2 = max(final_table$G2.x + final_table$G2.y)
+ max_G3 = max(final_table$G3.x + final_table$G3.y)
+ 
+ for(j in 1:length(final_table$G3.x))
+ {  
+   if(final_table$G1.x[j]+final_table$G1.y[j] == max_G1)
+   {Guardian_G1 = final_table$guardian.x[j]
+   Gender_G1 = final_table$sex[j]
+   }
+ }  
+ Guardian_G1
+ Gender_G1
+ 
+ for(j in 1:length(final_table$G3.x))
+ {  
+   if(final_table$G2.x[j]+final_table$G2.y[j] == max_G1)
+   {Guardian_G2 = final_table$guardian.x[j]
+   Gender_G2 = final_table$sex[j]
+   }
+ }  
+ Guardian_G2
+ Gender_G2
+ 
+ for(j in 1:length(final_table$G3.x))
+ {  
+   if(final_table$G3.x[j]+final_table$G3.y[j] == max_G1)
+   {Guardian_G3 = final_table$guardian.x[j]
+   Gender_G3 = final_table$sex[j]
+   }
+ }  
+ Guardian_G3
+ Gender_G3
+ 
+ ApplyQuintiles <- function(x) {
+   cut(x, breaks=c(quantile(final_table$combined_absences, probs = seq(0, 1, by = 0.20))), 
+       labels=c("0-3","3-6","6-9","9-12","12-15"),include.lowest=TRUE)
+ }
+ 
+ #Add the quintile to the dataframe
+ cut_pated<- cut(final_table$combined_absences,4)
+ View(cut_pated)
+ final_table$Quintile <- sapply(final_table$combined_absences, ApplyQuintiles)
+ table(final_table$Quintile)
+ View(final_table)
