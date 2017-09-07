@@ -74,14 +74,17 @@ for(i in 1:nrow(final_table))
  Guardian_G3
  Gender_G3
  
- ApplyQuintiles <- function(x) {
-   cut(x, breaks=c(quantile(final_table$combined_absences, probs = seq(0, 1, by = 0.20))), 
-       labels=c("0-3","3-6","6-9","9-12","12-15"),include.lowest=TRUE)
- }
+ mean_25percent<-0
+ mean_50percent<-0
+ mean_75percent<-0
+ mean_100percent<-0
+ quantile(final_table$combined_absences, probs=seq(0,1,0.25), na.rm=FALSE, names=TRUE, type=7)
+ mean_25percent<- mean(final_table$combined_absences[final_table$combined_absences>=quantile(final_table$combined_absences, 0.25, na.rm=TRUE)], na.rm=TRUE)
+ mean_50percent<- mean(final_table$combined_absences[final_table$combined_absences>=quantile(final_table$combined_absences, 0.50, na.rm=TRUE)], na.rm=TRUE)
+ mean_75percent<- mean(final_table$combined_absences[final_table$combined_absences>=quantile(final_table$combined_absences, 0.75, na.rm=TRUE)], na.rm=TRUE)
+ mean_100percent<- mean(final_table$combined_absences[final_table$combined_absences>=quantile(final_table$combined_absences, 1.00, na.rm=TRUE)], na.rm=TRUE)
+ View(mean_25percent)
+ View(mean_50percent)
+ View(mean_75percent)
+ View(mean_100percent)
  
- #Add the quintile to the dataframe
- cut_pated<- cut(final_table$combined_absences,4)
- View(cut_pated)
- final_table$Quintile <- sapply(final_table$combined_absences, ApplyQuintiles)
- table(final_table$Quintile)
- View(final_table)
